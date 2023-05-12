@@ -1,12 +1,25 @@
 import { getContact } from "../contacts";
 
-export async function loader({ params }) {
-  const contact = await getContact(params.contactId);
-  if (!contact) {
-    throw new Response("", {
-      status: 404,
-      statusText: "Not Found",
-    });
-  }
-  return { contact };
+export function contactDetailQuery(contactId) {
+  return {
+    queryFn: () => getContact(contactId),
+    queryKey: ["contacts", "detail", contactId],
+  };
 }
+
+export const loader =
+  (queryClient) =>
+  async ({ params }) => {
+    // console.log(queryClient);
+    const contact = await queryClient.ensureQueryData(
+      contactDetailQuery(params.contactId)
+    );
+
+    if (!contact) {
+      throw new Response("", {
+        status: 404,
+        statusText: "Not Found",
+      });
+    }
+    return { contact };
+  };

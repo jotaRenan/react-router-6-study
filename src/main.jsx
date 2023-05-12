@@ -13,6 +13,10 @@ import { action as rootAction } from "./actions/root";
 import { action as contactAction } from "./actions/contact";
 import { action as editAction } from "./actions/edit";
 import { action as destroyAction } from "./actions/destroy";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+
+const queryClient = new QueryClient();
 
 const router = createBrowserRouter([
   {
@@ -32,14 +36,14 @@ const router = createBrowserRouter([
           {
             path: "/contacts/:contactId",
             element: <Contact />,
-            loader: contactLoader,
-            action: contactAction,
+            loader: contactLoader(queryClient),
+            action: contactAction(queryClient),
           },
           {
             path: "/contacts/:contactId/edit",
             element: <EditContact />,
-            loader: contactLoader,
-            action: editAction,
+            loader: contactLoader(queryClient),
+            action: editAction(queryClient),
           },
           {
             path: "/contacts/:contactId/destroy",
@@ -56,6 +60,9 @@ const router = createBrowserRouter([
 
 ReactDOM.createRoot(document.getElementById("root")).render(
   <React.StrictMode>
-    <RouterProvider router={router} />
+    <QueryClientProvider client={queryClient}>
+      <ReactQueryDevtools initialIsOpen />
+      <RouterProvider router={router} />
+    </QueryClientProvider>
   </React.StrictMode>
 );

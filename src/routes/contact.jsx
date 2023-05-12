@@ -1,7 +1,10 @@
-import { Form, useFetcher, useLoaderData } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { Form, useFetcher, useParams } from "react-router-dom";
+import { contactDetailQuery } from "../loaders/contact";
 
 export default function Contact() {
-  const { contact } = useLoaderData();
+  const params = useParams();
+  const { data: contact } = useQuery(contactDetailQuery(params.contactId));
 
   return (
     <div id="contact">
